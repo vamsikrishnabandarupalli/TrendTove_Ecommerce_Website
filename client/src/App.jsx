@@ -29,9 +29,10 @@ function App() {
   );
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(checkAuth());
-  }, [dispatch]);
+    useEffect(() => {
+      dispatch(checkAuth());
+    }, [dispatch]);
+
 
   if (isLoading) return <Skeleton className="w-[800] bg-black h-[600px]" />;
 
@@ -73,6 +74,18 @@ function App() {
           <Route path="orders" element={<AdminOrders />} />
           <Route path="features" element={<AdminFeatures />} />
         </Route>
+
+
+        
+        <Route
+          path="/shop"
+          element={<ShoppingLayout />}
+        >
+          <Route path="paypal-return" element={<PaypalReturnPage />} />
+          <Route path="payment-success" element={<PaymentSuccessPage />} />
+        </Route>
+
+
         <Route
           path="/shop"
           element={
@@ -85,8 +98,6 @@ function App() {
           <Route path="listing" element={<ShoppingListing />} />
           <Route path="checkout" element={<ShoppingCheckout />} />
           <Route path="account" element={<ShoppingAccount />} />
-          <Route path="paypal-return" element={<PaypalReturnPage />} />
-          <Route path="payment-success" element={<PaymentSuccessPage />} />
           <Route path="search" element={<SearchProducts />} />
         </Route>
         <Route path="/unauth-page" element={<UnauthPage />} />

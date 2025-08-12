@@ -3,7 +3,7 @@ const Order = require("../../models/Orders");
 const Cart = require("../../models/Cart");
 const Product = require("../../models/Product");
 
-// Create PayPal order and save it to DB
+
 const createOrder = async (req, res) => {
   try {
     const {
@@ -35,7 +35,7 @@ const createOrder = async (req, res) => {
       },
       redirect_urls: {
         return_url: "http://localhost:5173/shop/paypal-return",
-        cancel_url: "http://localhost:5173/shop/paypal-cancel",
+        cancel_url: "http://localhost:5173/shop/checkout",
       },
       transactions: [
         {
@@ -107,7 +107,7 @@ const createOrder = async (req, res) => {
   }
 };
 
-// Capture payment, update order, and reduce stock
+
 const capturePayment = async (req, res) => {
   try {
     const { paymentId, payerId, orderId } = req.body;
@@ -132,7 +132,6 @@ const capturePayment = async (req, res) => {
     order.paymentId = paymentId;
     order.payerId = payerId;
 
-    // Reduce stock for each product
     for (let item of order.cartItems) {
       const product = await Product.findById(item.productId);
 
@@ -154,7 +153,7 @@ const capturePayment = async (req, res) => {
       await product.save();
     }
 
-    // Delete cart after successful order
+   
     if (order.cartId) {
       await Cart.findByIdAndDelete(order.cartId);
     }
@@ -175,7 +174,7 @@ const capturePayment = async (req, res) => {
   }
 };
 
-// Get all orders by user
+
 const getAllOrdersByUser = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -209,7 +208,7 @@ const getAllOrdersByUser = async (req, res) => {
   }
 };
 
-// Get single order details
+
 const getOrderDetails = async (req, res) => {
   try {
     const { id } = req.params;

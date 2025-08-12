@@ -94,19 +94,24 @@ function ShoppingCheckout() {
           setCurrentSelectedAddress={setCurrentSelectedAddress}
         />
         <div className="flex flex-col gap-4">
-          {cartItems?.items?.length > 0
-            ? cartItems.items.map((item) => (
-                <UserCartItemsContent key={item.productId} cartItem={item} />
-              ))
-            : null}
-          <div className="mt-8 space-y-4">
+          <div className="max-h-[400px] overflow-y-auto pr-2 space-y-4">
+            {cartItems?.items?.length > 0
+              ? cartItems.items.map((item) => (
+                  <UserCartItemsContent key={item.productId} cartItem={item} />
+                ))
+              : <p className="text-muted-foreground text-sm">Your cart is empty.</p>}
+          </div>
+          <div className="mt-4 space-y-4">
             <div className="flex justify-between">
               <span className="font-bold">Total</span>
               <span className="font-bold">${totalCartAmount}</span>
             </div>
           </div>
           <div className="mt-4 w-full">
-            <Button onClick={handleInitiatePaypalPayment} className="w-full bg-rose-800 hover:bg-rose-700 text-white">
+            <Button
+              onClick={handleInitiatePaypalPayment}
+              className="w-full bg-rose-800 hover:bg-rose-700 text-white"
+            >
               {isPaymentStart
                 ? "Processing Paypal Payment..."
                 : "Checkout with Paypal"}

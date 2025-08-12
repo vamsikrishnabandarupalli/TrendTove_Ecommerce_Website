@@ -2,9 +2,9 @@ import CommonForm from "../../components/common/form";
 import { useToast } from "../../components/ui/use-toast";
 import { loginFormControls } from "../../config";
 import { loginUser } from "@/store/auth-slice";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 
 const initialState = {
   email: "",
@@ -15,6 +15,8 @@ function AuthLogin() {
   const [formData, setFormData] = useState(initialState);
   const dispatch = useDispatch();
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   function onSubmit(event) {
     event.preventDefault();
@@ -26,6 +28,20 @@ function AuthLogin() {
       }
     });
   }
+
+  // ⏭ Redirect after login
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const redirectPath = sessionStorage.getItem("redirectAfterLogin");
+      sessionStorage.removeItem("redirectAfterLogin");
+
+      if (redirectPath) {
+        navigate(redirectPath);
+      } else {
+        navigate(user?.role === "admin" ? "/admin/dashboard" : "/shop/home");
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
 
   return (
     <div className="mx-auto w-full max-w-md space-y-6">
@@ -41,15 +57,15 @@ function AuthLogin() {
         setFormData={setFormData}
         onSubmit={onSubmit}
       />
-        <p className="mt-2">
-            Don't have an account
-            <Link
-                to="/auth/register"
-                className="font-medium ml-2 text-primary hover:text-rose-500 "
-            >
-                Register
-          </Link>
-        </p>
+      <p className="mt-2 text-center">
+        Don't have an account?
+        <Link
+          to="/auth/register"
+          className="font-medium ml-2 text-primary hover:text-rose-500"
+        >
+          Register
+        </Link>
+      </p>
     </div>
   );
 }

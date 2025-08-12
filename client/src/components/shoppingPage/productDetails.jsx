@@ -30,44 +30,37 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
   const handleRatingChange = (newRating) => setRating(newRating);
 
   const handleAddToCart = (productId, totalStock) => {
-    const currentCartItems = cartItems.items || [];
-    const existingItemIndex = currentCartItems.findIndex(
-      (item) => item.productId === productId
-    );
-    if (existingItemIndex > -1) {
-      const currentQuantity = currentCartItems[existingItemIndex].quantity;
-      if (currentQuantity + 1 > totalStock) {
+    const cart = cartItems.items || [];
+    const index = cart.findIndex((item) => item.productId === productId);
+    if (index > -1) {
+      const quantity = cart[index].quantity;
+      if (quantity + 1 > totalStock) {
         toast({
-          title: `Only ${currentQuantity} quantity can be added for this item`,
+          title: `Only ${quantity} quantity can be added for this item`,
           variant: "destructive",
         });
         return;
       }
     }
-    dispatch(addToCart({ userId: user?.id, productId, quantity: 1 })).then(
-      (res) => {
-        if (res?.payload?.success) {
-          dispatch(fetchCartItems(user?.id));
-          toast({ title: "Product is added to cart" });
-        }
+    dispatch(addToCart({ userId: user?.id, productId, quantity: 1 })).then((res) => {
+      if (res?.payload?.success) {
+        dispatch(fetchCartItems(user?.id));
+        toast({ title: "Product is added to cart" });
       }
-    );
+    });
   };
 
-  const handleDialogChange = (isOpen) => {
-    setOpen(isOpen);
-    if (!isOpen) {
-      dispatch(setProductDetails());
-      setRating(0);
-      setReviewMsg("");
-    }
+  const handleDialogClose = () => {
+    setOpen(false);
+    dispatch(setProductDetails());
+    setRating(0);
+    setReviewMsg("");
   };
 
   const handleAddReview = () => {
-    if (!productDetails?._id) return;
     dispatch(
       addReview({
-        productId: productDetails._id,
+        productId: productDetails?._id,
         userId: user?.id,
         userName: user?.userName,
         reviewMessage: reviewMsg,
@@ -98,9 +91,10 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
       : 0;
 
   return (
-    <Dialog open={open} onOpenChange={handleDialogChange}>
+    <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent
-        className="h-screen md:h-auto max-w-[100vw] p-2 sm:p-4 md:p-6 lg:p-8 max-h-screen overflow-y-auto" aria-describedby="product-dialog-description"
+        className="h-screen md:h-auto max-w-[100vw] p-2 sm:p-4 md:p-6 lg:p-8 max-h-screen overflow-y-auto"
+        aria-describedby="product-dialog-description"
       >
         <DialogTitle>{productDetails?.title || "Product Details"}</DialogTitle>
         <DialogDescription
@@ -112,7 +106,8 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
         </DialogDescription>
 
         <div className="flex flex-col lg:flex-row gap-y-5 lg:gap-x-8 h-full">
-          <div className="w-full lg:w-[40%] flex justify-center items-center min-h-[200px] ">
+          {/* Image section */}
+          <div className="w-full lg:w-[40%] flex justify-center items-center min-h-[200px]">
             <img
               src={productDetails?.image}
               alt={productDetails?.title}
@@ -120,6 +115,8 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
               loading="lazy"
             />
           </div>
+
+          {/* Details and review section */}
           <div className="overflow-y-auto lg:w-[60%] p-2 pr-4 max-h-[75vh] scrollbar-thin">
             <h1 className="text-lg sm:text-xl font-extrabold break-words">
               {productDetails?.title}
@@ -172,6 +169,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
 
             <Separator />
 
+            {/* Reviews */}
             <div className="mt-6">
               <h2 className="text-lg sm:text-xl font-bold mb-4">Reviews</h2>
               <div className="grid gap-6">
@@ -180,7 +178,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                     <div className="flex gap-4" key={review._id || review.userId}>
                       <Avatar className="w-10 h-10 border">
                         <AvatarFallback>
-                          {review.userName?.[0]?.toUpperCase()}
+                          {review?.userName?.[0]?.toUpperCase() || "U"}
                         </AvatarFallback>
                       </Avatar>
                       <div className="grid gap-1">
@@ -201,6 +199,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                 )}
               </div>
 
+              {/* Add Review */}
               <div className="mt-5 flex flex-col gap-2">
                 <Label>Write a review</Label>
                 <div className="flex items-center gap-2 mt-2">

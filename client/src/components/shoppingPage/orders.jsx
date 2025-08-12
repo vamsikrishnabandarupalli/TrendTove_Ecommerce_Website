@@ -67,8 +67,8 @@ function ShoppingOrders() {
                         orderItem.orderStatus === "confirmed"
                           ? "bg-green-500"
                           : orderItem.orderStatus === "rejected"
-                          ? "bg-red-600"
-                          : "bg-black"
+                          ? "bg-red-900"
+                          : "bg-rose-600 hover:bg-rose-700 text-white"
                       }`}
                     >
                       {orderItem.orderStatus}
@@ -83,7 +83,7 @@ function ShoppingOrders() {
                         dispatch(resetOrderDetails());
                       }}
                     >
-                      <Button className='bg-rose-700' onClick={() => handleFetchOrderDetails(orderItem._id)}>
+                      <Button className='bg-rose-800 hover:bg-rose-700 text-white' onClick={() => handleFetchOrderDetails(orderItem._id)}>
                         View Details
                       </Button>
                       <ShoppingOrderDetailsView orderDetails={orderDetails} />

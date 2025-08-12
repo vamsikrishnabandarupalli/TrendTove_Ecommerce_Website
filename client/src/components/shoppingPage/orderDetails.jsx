@@ -10,7 +10,7 @@ function ShoppingOrderDetailsView({ orderDetails }) {
   const orderStatusColor = {
     confirmed: "bg-green-500",
     rejected: "bg-red-600",
-  }[orderDetails?.orderStatus] || "bg-black";
+  }[orderDetails?.orderStatus] || "bg-rose-600 hover:bg-rose-700 text-white";
 
   return (
     <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
@@ -39,7 +39,7 @@ function ShoppingOrderDetailsView({ orderDetails }) {
           <div className="flex mt-2 items-center justify-between">
             <p className="font-medium">Order Status</p>
             <Label>
-              <Badge className={`py-1 px-3 ${orderStatusColor}`}>
+              <Badge className={`py-1 px-3  ${orderStatusColor}`}>
                 {orderDetails?.orderStatus}
               </Badge>
             </Label>

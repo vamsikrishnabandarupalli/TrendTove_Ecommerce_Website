@@ -19,17 +19,17 @@ function AdminProductTile({
           />
         </div>
         <CardContent>
-          <h2 className="text-lg font-bold mb-2 mt-2 text-rose-800">{product?.title}</h2>
+          <h2 className="text-md font-bold mb-2 mt-2 text-rose-800">{product?.title}</h2>
           <div className="flex justify-between items-center mb-2">
             <span
-              className={`text-md font-semibold text-primary text-rose-800 ${
+              className={`text-sm font-semibold text-primary text-rose-800 ${
                 product?.salePrice > 0 ? "line-through" : ""
               }`}
             >
               ${product?.price}
             </span>
             {product?.salePrice > 0 && (
-              <span className="text-md font-bold text-rose-800">${product?.salePrice}</span>
+              <span className="text-sm font-bold text-rose-800">${product?.salePrice}</span>
             )}
           </div>
         </CardContent>

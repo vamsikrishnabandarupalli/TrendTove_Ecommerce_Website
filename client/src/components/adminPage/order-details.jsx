@@ -60,8 +60,8 @@ const AdminOrderDetailsView = ({ orderDetails }) => {
                   orderDetails?.orderStatus === "confirmed"
                     ? "bg-green-500"
                     : orderDetails?.orderStatus === "rejected"
-                    ? "bg-red-600"
-                    : "bg-black"
+                    ? "bg-red-900 text-white"
+                    : "bg-rose-800 hover:bg-rose-700 text-white "
                 }`}
               >
                 {orderDetails?.orderStatus}
@@ -92,7 +92,7 @@ const AdminOrderDetailsView = ({ orderDetails }) => {
           <div className="grid gap-2">
             <div className="font-medium">Shipping Info</div>
             <div className="grid gap-0.5 text-muted-foreground">
-              <span>{user?.userName}</span>
+              <span>{user.userName}</span>
               <span>{orderDetails?.addressInfo?.address}</span>
               <span>{orderDetails?.addressInfo?.city}</span>
               <span>{orderDetails?.addressInfo?.pincode}</span>

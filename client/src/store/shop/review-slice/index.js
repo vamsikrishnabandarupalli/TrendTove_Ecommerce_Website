@@ -7,36 +7,36 @@ const initialState = {
   error: null,
 };
 
-// Add review thunk
 export const addReview = createAsyncThunk(
-  "review/addReview",
-  async (formdata, { rejectWithValue }) => {
+  "shop/addReview",
+  async ({ productId, userId, userName, reviewMessage, reviewValue }, thunkAPI) => {
     try {
-      const token = localStorage.getItem("token");
-      console.log("Token:", token);
+      const state = thunkAPI.getState();
+      const token = (state.auth && state.auth.token) || localStorage.getItem("token");
+
       const response = await axios.post(
         "http://localhost:5000/api/shop/review/add",
-        formdata,
+        {
+          productId,
+          userId,
+          userName,
+          reviewMessage,
+          reviewValue,
+        },
         {
           headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        withCredentials: true 
-        
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
+
       return response.data;
-    } catch (error) {
-      const errorData =
-        error.response && error.response.data
-          ? error.response.data
-          : { message: "Add review failed" };
-      return rejectWithValue(errorData);
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
     }
   }
 );
 
-// Get reviews thunk
 export const getReviews = createAsyncThunk(
   "review/getReviews",
   async (productId, { rejectWithValue }) => {
@@ -55,7 +55,6 @@ export const getReviews = createAsyncThunk(
   }
 );
 
-// Slice
 const reviewSlice = createSlice({
   name: "review",
   initialState,

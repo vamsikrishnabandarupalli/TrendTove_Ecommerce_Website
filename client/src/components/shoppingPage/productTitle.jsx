@@ -28,25 +28,25 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart
           ) : null}
         </div>
         <CardContent className="p-4">
-          <h2 className="text-xl font-bold mb-2">{product?.title}</h2>
+          <h2 className="text-md font-bold mb-2 text-rose-800">{product?.title}</h2>
           <div className="flex justify-between items-center mb-2">
-            <span className="text-[16px] text-muted-foreground">
+            <span className="text-md text-muted-foreground">
               {categoryOptionsMap[product?.category]}
             </span>
-            <span className="text-[16px] text-muted-foreground">
+            <span className="text-md text-muted-foreground">
               {brandOptionsMap[product?.brand]}
             </span>
           </div>
           <div className="flex justify-between items-center mb-2">
             <span
-              className={`text-lg font-semibold text-primary ${
+              className={`text-md font-semibold text-primary text-rose-800 ${
                 product?.salePrice > 0 ? "line-through" : ""
               }`}
             >
               ${product?.price}
             </span>
             {product?.salePrice > 0 && (
-              <span className="text-lg font-semibold text-primary">
+              <span className="text-md font-semibold text-primary text-rose-800">
                 ${product.salePrice}
               </span>
             )}

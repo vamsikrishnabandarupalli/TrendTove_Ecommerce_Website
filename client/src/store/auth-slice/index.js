@@ -1,10 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const savedUser = sessionStorage.getItem("authUser");
+const savedAuth = sessionStorage.getItem("isAuthenticated") === "true";
+
 const initialState = {
-  isAuthenticated: false,
+  isAuthenticated: savedAuth,
   isLoading: true,
-  user: null,
+  user: savedUser ? JSON.parse(savedUser) : null,
 };
 
 export const registerUser = createAsyncThunk("auth/register", async (formData) => {
@@ -15,28 +18,40 @@ export const registerUser = createAsyncThunk("auth/register", async (formData) =
 });
 
 export const loginUser = createAsyncThunk("auth/login", async (formData) => {
-  const response = await axios.post("http://localhost:5000/api/auth/login", formData);
-  if (response.data.token) {
-    localStorage.setItem("token", response.data.token);
+  const response = await axios.post("http://localhost:5000/api/auth/login", formData, {
+    withCredentials: true,
+  });
+  if (response.data.success) {
+    sessionStorage.setItem("authUser", JSON.stringify(response.data.user));
+    sessionStorage.setItem("isAuthenticated", "true");
   }
   return response.data;
 });
 
-
 export const logoutUser = createAsyncThunk("auth/logout", async () => {
-  const response = await axios.post("http://localhost:5000/api/auth/logout", {}, {
+  await axios.post("http://localhost:5000/api/auth/logout", {}, {
     withCredentials: true,
   });
-  return response.data;
+  sessionStorage.removeItem("authUser");
+  sessionStorage.removeItem("isAuthenticated");
 });
 
-export const checkAuth = createAsyncThunk("auth/checkAuth", async () => {
-  const response = await axios.get("http://localhost:5000/api/auth/check-auth", {
-    withCredentials: true,
+export const checkAuth = createAsyncThunk("auth/checkauth", async () => {
+    const response = await axios.get("http://localhost:5000/api/auth/check-auth", {
+        withCredentials: true,
     headers: {
-      "Cache-Control": "no-store",
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
     },
   });
+
+  if (response.data.success) {
+    sessionStorage.setItem("authUser", JSON.stringify(response.data.user));
+    sessionStorage.setItem("isAuthenticated", "true");
+  } else {
+    sessionStorage.removeItem("authUser");
+    sessionStorage.removeItem("isAuthenticated");
+  }
+
   return response.data;
 });
 
@@ -57,9 +72,8 @@ const authSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
       })
-      .addCase(registerUser.rejected, (state) => {
-        state.isLoading = false;
-      })
+      .addCase(registerUser.rejected, (state) => { state.isLoading = false; })
+
       .addCase(loginUser.pending, (state) => { state.isLoading = true; })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -71,6 +85,7 @@ const authSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
       })
+
       .addCase(checkAuth.pending, (state) => { state.isLoading = true; })
       .addCase(checkAuth.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -82,10 +97,11 @@ const authSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
       })
+
       .addCase(logoutUser.fulfilled, (state) => {
-        state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
+        state.isLoading = false;
       });
   },
 });

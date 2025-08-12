@@ -2,32 +2,39 @@ import { Card, CardHeader, CardTitle } from "../../components/ui/card";
 import { capturePayment } from "@/store/shop/order-slice";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function PaypalReturnPage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const paymentId = params.get("paymentId");
   const payerId = params.get("PayerID");
 
   useEffect(() => {
-    if (paymentId && payerId) {
-      const orderId = JSON.parse(sessionStorage.getItem("currentOrderId"));
+    const orderId = JSON.parse(sessionStorage.getItem("currentOrderId"));
 
+    if (paymentId && payerId && orderId) {
       dispatch(capturePayment({ paymentId, payerId, orderId })).then((data) => {
         if (data?.payload?.success) {
           sessionStorage.removeItem("currentOrderId");
-          window.location.href = "/shop/payment-success";
+          navigate("/shop/payment-success");
+        } else {
+          navigate("/shop/checkout");
         }
       });
+    } else {
+      navigate("/shop/checkout");
     }
-  }, [paymentId, payerId, dispatch]);
+  }, [dispatch, paymentId, payerId, navigate]);
 
   return (
-    <Card>
+    <Card className="mt-20 w-full max-w-xl mx-auto text-center p-8">
       <CardHeader>
-        <CardTitle>Processing Payment...Please wait!</CardTitle>
+        <CardTitle className="text-lg text-gray-700">
+          Processing Payment... Please wait!
+        </CardTitle>
       </CardHeader>
     </Card>
   );

@@ -71,8 +71,8 @@ function AdminOrdersView() {
                             order.orderStatus === "confirmed"
                               ? "bg-green-500"
                               : order.orderStatus === "rejected"
-                              ? "bg-red-600"
-                              : "bg-black"
+                              ? "bg-red-900"
+                              : "bg-rose-600 hover:bg-rose-500 text-white "
                           }`}
                         >
                           {order.orderStatus}
